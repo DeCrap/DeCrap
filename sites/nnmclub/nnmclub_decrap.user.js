@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         NNM Club DeCrap
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.2
 // @description  Removes all crap and shit for this site
 // @author       DeCrap
 // @include      /^https?://nnmclub.to/*/
@@ -13,175 +13,129 @@
 //html: http://htmlbook.ru, https://webref.ru/html
 //js: https://learn.javascript.ru
 
-
-var last = false;
-var select_result = null;
-var selector_remove = []; //Элементы, которые необходимо удалить из кода страницы
-var selector_modification = []; //Элементы, которые необходимо изменить.
-
-//Добавяем фильтры
-
-//remove craps
-
-//copy-paste this template
-//selector_remove.push('');
-
-//remove shit trading
-selector_remove.push('//table/tbody/tr[3]/td/span/a[1][contains(@href, "t=154688")]');
-
-//remove crap desing from shitdesigner this shitsite
-selector_remove.push('//td[@class="leftnav"]');
-selector_remove.push('//script[contains(@src, "music")]');
-selector_remove.push('//div[@class="highslide-container"]');
-
-//remove misc shits
-//selector_remove.push('//html[contains(@prefix, "ya:")]');
-selector_remove.push('//meta[contains(@*, "ya:") or contains(@*, "yandex")]');
-selector_remove.push('//link[contains(@*, "ya:") or contains(@*, "yandex")]');
-
-//remove crap links
-selector_remove.push('//div[@class="request"]');
-
-//remove visible craps
-selector_remove.push('//div[@class="branding"]');
-selector_remove.push('//*[@id="logo"]');//micro sqare shit images on top
-selector_remove.push('//div[@class="copyright"]');
-
-//remove all hidden elements - all hidden default craps
-selector_remove.push('//*[@style="display:none"]');
-
-//remove all hacks - all hacks hide crap on webspiders, and all hack in default of illegals
-selector_remove.push('//noindex');
-selector_remove.push('//noscript');
-selector_remove.push('//comment()');
-
-//remove crap scripts
-selector_remove.push('//script[contains(@src, "requests")]');
-selector_remove.push('//script[contains(@src, "marketgid") or contains(., "marketgid")]');
-selector_remove.push('//script[contains(@src, "nighter.club") or contains(., "nighter.club")]');
-selector_remove.push('//script[contains(@src, "analytics") or contains(., "analytics")]');
-selector_remove.push('//script[contains(@src, "yadro") or contains(., "yadro")]');
-selector_remove.push('//script[contains(@src, "yandex") or contains(., "yandex")]');
-selector_remove.push('//script[contains(@src, "advert") or contains(., "advert")]');
-//selector_remove.push('//script[contains(., "random")]');
-//selector_remove.push('//script');
-
-selector_remove.push('//center/div[contains(@class, "DA-BLOCK")]');
-selector_remove.push('//center/script[contains(., "DA-BLOCK")]');
-
-
-selector_modification.push('/html','');
-
-
-function del(selector)
+function filters()
 {
-    var result = document.evaluate(selector, document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
-    //    if ((result !== null) && (result.snapshotLength !== 0))
+    //del(filter) - clear advertisment in realtime, before html-page comlete loading
+    //adel(filter) - clear advertisment after html-page comlete loading
+    //edit(filter, newvalue) - edit element in realtime, before html-page comlete loading
+    //aedit(filter, newvalue) - edit element after html-page comlete loading
+
+    //remove adbloc detect
+    del('//div[@class="request"]');
+    del('//script[contains(@src, "requests")]');
+
+    //remove directadvert.ru
+    del('//center/div[contains(@class, "DA-BLOCK")]');
+    adel('//center/script[contains(., "DA-BLOCK")]');
+    del('//script[contains(@src, "directadvert.ru") or contains(., "directadvert.ru")]');
+}
+
+
+
+
+
+
+//primary func
+
+function main()
+{
+    if (count > 0)
     {
-        for (var i = select_result.snapshotLength - 1; i >= 0; i--)
-        {
-            var element = select_result.snapshotItem(i);
-            alert(element);
-            element.parentNode.removeChild(element);
-        }
+        count = 0;
+        remove(sync_filter);
+        editor(sync_edit);
+    }
+
+    if (count > 0)
+    {
+        id = setTimeout(main, 100);
+    }
+
+    if (last)
+    {
+        ClearAllTimeouts();
+        remove(sync_filter);
+        remove(async_filter);
+        editor(sync_edit);
+        editor(async_edit);
+        clearTimeout(id);
     }
 }
 
-//
-//remove element
-function remove()
+
+
+//begin script
+
+var last = false;
+var id;
+var count = 0;
+var sync_filter = [];
+var async_filter = [];
+var sync_edit = [];
+var async_edit = [];
+
+//start script
+count++;
+
+//fill filters
+filters();
+
+//set listener
+document.onreadystatechange = wait_load; //wait complete loading and clear async crap
+
+//set interactive clear crap
+id = setTimeout(main, 100);
+
+//end.
+
+
+
+//misc func
+
+function remove(array)
 {
-    if (select_result !== null)
+    if ((array !== null)&&(array.length > 0))
     {
-        if (select_result.snapshotLength !== 0)
+        for (let i = 0; i <= array.length - 1; i++)
         {
-            for (var i = select_result.snapshotLength - 1; i >= 0; i--)
+            let result = document.evaluate(array[i], document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+            if ((result !== null) && (result.snapshotLength > 0))
             {
-                var element = select_result.snapshotItem(i);
-                element.parentNode.removeChild(element);
+                for (let i = 0; i <= result.snapshotLength - 1; i++)
+                {
+                    let element = result.snapshotItem(i);
+                    element.parentNode.removeChild(element);
+                }
             }
         }
     }
 }
 
-
-//scan document
-function xpath_scan(selector)
-{
-    //var regex = "/html/body//div[./div/div/div/div/a[contains(@href, 'marketgid') or contains(@href, 'tovarro')]]";
-
-    //reset var
-    select_result = null;
-    //fill var
-    select_result = document.evaluate(selector, document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
-
-    //terminate scan, if scaning over 1 sec
-    //    if (time_count <= 10)
-    //    {
-    //        window.setTimeout(xpath,100);
-    //        if (select_result.snapshotLength !== 0) time_count = 0;
-    //        time_count++;
-    //    }
-    //
-    //    remove();
-}
-//
-
 function ClearAllIntervals() {
-    for (var i = 1; i < 99999; i++)
+    for (let i = 1; i < 99999; i++)
         window.clearInterval(i);
+}
+
+function ClearAllTimeouts() {
+    for (let i = 1; i < 99999; i++)
+        window.clearTimeout(i);
 }
 
 function wait_load()
 {
     if (document.readyState === "complete")
     {
-        //dd
+        last = true;
+        id = setTimeout(main, 100);
     }
 }
 
-
-//Main logic
-function main()
+function del(selector)
 {
-    //wait complete loading and clear async crap
-    document.onreadystatechange = function () {
-        if (document.readyState === "complete") {
-            //var path = "//script[@src='locationOfScript']";
-            // etc...
-
-            //for (var i = selector_remove.length - 1; i>=0; i--) del(selector_remove[i]);
-            //del('//*[@id="logo"]');
-
-            ClearAllIntervals();
-
-            //
-            //remove all
-            for (var i = selector_remove.length - 1; i>=0; i--)
-            {
-                xpath_scan(selector_remove[i]);
-                remove();
-            }
-            //selector_remove = null;
-
-            //modification all
-            for (var j = selector_modification.length - 1; j>=0; j--)
-            {
-                //        xpath_scan(selector_modification[j]);
-                //        remove();
-            }
-            selector_modification = null;
-
-            //clear memory
-            select_result = null;
-            //
-        }};
+    sync_filter.push(selector);
 }
 
-//set listener
-document.onreadystatechange = wait_load(); //wait complete loading and clear async crap
-
-//Run script
-main();
-
-//window.setTimeout(main,10);
+function adel(selector)
+{
+    async_filter.push(selector);
+}
