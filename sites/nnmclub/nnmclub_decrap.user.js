@@ -1,9 +1,8 @@
 // ==UserScript==
 // @name         NNM Club DeCrap
 // @namespace    http://tampermonkey.net/
-// @version      0.3.01
+// @version      0.3.1
 // @downloadURL  https://github.com/DeCrap/DeCrap/raw/master/sites/nnmclub/nnmclub_decrap.user.js
-// @downloadURL  https://github.com/DeCrap/DeCrap/raw/feature/sites/nnmclub/nnmclub_decrap.user.js
 // @description  Removes all crap and shit for this site
 // @author       DeCrap
 // @run-at       document-start
