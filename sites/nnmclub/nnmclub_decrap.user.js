@@ -1,149 +1,45 @@
 // ==UserScript==
 // @name         NNM Club DeCrap
 // @namespace    http://tampermonkey.net/
-// @version      0.2.2
+// @version      0.2
 // @downloadURL  https://github.com/DeCrap/DeCrap/raw/master/sites/nnmclub/nnmclub_decrap.user.js
 // @description  Removes all crap and shit for this site
 // @author       DeCrap
+// @license      GPL3
+// @require      https://github.com/DeCrap/DeCrap/raw/master/core/V1/decrap_core_v1.user.js
 // @run-at       document-start
 // @grant        none
 // @include      /^https?://nnmclub.to/*/
 // ==/UserScript==
 
 //Docs for "one hour learning" antiadvertisment scripting, lol
+//script header: https://wiki.greasespot.net/Metadata_Block
 //Xpath selector format: http://www.w3schools.com/xsl/xpath_syntax.asp, https://ru.wikipedia.org/wiki/XPath
 //html: http://htmlbook.ru, https://webref.ru/html
 //js: https://learn.javascript.ru
 
+start();
+filters();
+
 function filters()
 {
-    //del(filter) - clear advertisment in realtime, before html-page comlete loading
-    //adel(filter) - clear advertisment after html-page comlete loading
-    //edit(filter, newvalue) - edit element in realtime, before html-page comlete loading
-    //aedit(filter, newvalue) - edit element after html-page comlete loading
 
-    //remove adbloc detect
+    //adblock detect
     del('//div[@class="request"]');
     del('//script[contains(@src, "requests")]');
 
-    //remove directadvert.ru
-    del('//center/div[contains(@class, "DA-BLOCK")]');
-    adel('//center/script[contains(., "DA-BLOCK")]');
+    //directadvert.ru
+    del('//div[contains(@class, "DA-BLOCK")]');
+    adel('//script[contains(., "DA-BLOCK")]');
     del('//script[contains(@src, "directadvert.ru") or contains(., "directadvert.ru")]');
-}
-
-
-
-
-
-
-//primary func
-
-function main()
-{
-    if (count > 0)
-    {
-        count = 0;
-        remove(sync_filter);
-        editor(sync_edit);
-    }
-
-    if (count > 0)
-    {
-        id = setTimeout(main, 100);
-    }
-
-    if (last)
-    {
-        ClearAllTimeouts();
-        remove(sync_filter);
-        remove(async_filter);
-        editor(sync_edit);
-        editor(async_edit);
-        clearTimeout(id);
-    }
-}
-
-
-
-//begin script
-
-var last = false;
-var id;
-var count = 0;
-var sync_filter = [];
-var async_filter = [];
-var sync_edit = [];
-var async_edit = [];
-
-//start script
-count++;
-
-//fill filters
-filters();
-
-//set listener
-document.onreadystatechange = wait_load; //wait complete loading and clear async crap
-
-//set interactive clear crap
-id = setTimeout(main, 100);
-
-//end.
-
-
-
-//misc func
-
-function remove(array)
-{
-    if ((array !== null)&&(array.length > 0))
-    {
-        for (let i = 0; i <= array.length - 1; i++)
-        {
-            let result = document.evaluate(array[i], document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
-            if ((result !== null) && (result.snapshotLength > 0))
-            {
-                for (let i = 0; i <= result.snapshotLength - 1; i++)
-                {
-                    let element = result.snapshotItem(i);
-                    element.parentNode.removeChild(element);
-                    count++;
-                }
-            }
-        }
-    }
-}
-
-function editor()
-{
     
-}
-
-function ClearAllIntervals() {
-    for (let i = 1; i < 99999; i++)
-        window.clearInterval(i);
-}
-
-function ClearAllTimeouts() {
-    for (let i = 1; i < 99999; i++)
-        window.clearTimeout(i);
-}
-
-function wait_load()
-{
-    if (document.readyState === "complete")
-    {
-        last = true;
-        id = setTimeout(main, 100);
-    }
-}
-
-function del(selector)
-{
-    sync_filter.push(selector);
-}
-
-function adel(selector)
-{
-    async_filter.push(selector);
+    //marketgid.com
+    del('//script[contains(@src, "marketgid.com") or contains(., "marketgid.com")]');
+    del('//div[@class="mgbox"]');
+    
+    //awesomeredirector.com
+    del('//*[contains(@href, "awesomeredirector.com")]');
+    
+    //background image
+    del('//style[contains(., "background-image")]');
 }
