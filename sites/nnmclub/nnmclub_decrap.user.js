@@ -15,9 +15,8 @@
 	'use strict';
 	var filter = {}; //array for filters
 	var timeout = {};
-	filter.node.del = [];
-	filter.attr.del.node = [];
-	filter.attr.del.attr = [];
+	filter.node = [];
+	filter.attr = [[],[]];
 	////////////////////////
 	//settings
 	timeout.freeze = 2000; //freeze all script every some second
@@ -263,8 +262,8 @@
 
 
 	function remove() {
-		filterscan(filter.node.del);
-		filterscan(filter.attr.del.node, 1);
+		filterscan(filter.node);
+		filterscan(filter.attr[0], 1);
 	}
 
 
@@ -293,13 +292,13 @@
 
 	function removenode(node, index, mode) {
 		switch (mode) {
-			case 0:
+			case (0):
 				//remove node
 				node.parentNode.removeChild(node);
 				break;
-			case 1:
+			case (1):
 				//remove attribute
-				node.removeAttribute(filter.attr.del.attr[index]);
+				node.removeAttribute(filter.attr[1][index]);
 				break;
 			default:
 				log('ERROR removenode');
@@ -312,7 +311,7 @@
 
 	function editnode(node) {
 		//
-		node.setAttribute("category", "food");
+		//node.setAttribute("category", "food");
 
 	}
 
@@ -347,10 +346,10 @@
 
 	function del(selector, attr) {
 		if (attr === undefined) {
-			filter.node.del.push(selector);
+			filter.node.push(selector);
 		} else {
-			filter.attr.del.node.push(selector);
-			filter.attr.del.attr.push(attr);
+			filter.attr[0].push(selector);
+			filter.attr[1].push(attr);
 		}
 	}
 
