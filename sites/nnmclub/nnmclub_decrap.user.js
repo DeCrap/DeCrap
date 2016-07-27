@@ -13,15 +13,19 @@
 
 (function() {
 	'use strict';
-	var filter = []; //array for filters
+	var filter = {}; //array for filters
 	var timeout = {};
+	filter.node.del = [];
+	filter.attr.del.node = [];
+	filter.attr.del.attr = [];
 	////////////////////////
 	//settings
 	timeout.freeze = 2000; //freeze all script every some second
 	timeout.remove = 230; //clear crap timeout
 	timeout.main = 50; //minimal mainloop timeout
 	//var debuglevel = 1; //0..3 - deep logging
-	var debug = 0;
+	var debug = 1; //enable logs
+	var design = 1; //fix site design
 	////////////////////////
 	log('starting!');
 
@@ -49,6 +53,13 @@
 
 	//background image
 	del('//style[contains(., "background-image")]');
+
+	if (design === 1) {
+		//left navigation bar
+		del('//td[@class="leftnav"]');
+		del('//div[@class="copyright"]');
+		del('//body/div[@class="wrap"]', 'class');
+	}
 
 	///////////////////////////////////////////////////
 	// ↑↑↑↑↑↑ YOUR ↑↑↑↑↑↑ FILTERS ↑↑↑↑↑↑ HERE ↑↑↑↑↑↑ //
@@ -252,35 +263,48 @@
 
 
 	function remove() {
-		filterscan();
+		filterscan(filter.node.del);
+		filterscan(filter.attr.del.node, 1);
 	}
 
 
-	function filterscan() {
-		if ((filter !== null) && (filter.length > 0)) {
-			for (let i = 0; i <= filter.length - 1; i++) {
+	function filterscan(array, mode = 0) {
+		if ((array !== null) && (array.length > 0)) {
+			for (let i = 0; i <= array.length - 1; i++) {
 				//find crap
-				result = document.evaluate(filter[i], document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+				result = document.evaluate(array[i], document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
 				//remove finding crap
-				resultscan(i);
+				resultscan(array, i, mode);
 			}
 		}
 	}
 
 
-	function resultscan(index) {
+	function resultscan(array, index, mode) {
 		if ((result !== null) && (result.snapshotLength > 0)) {
-			log('remove ' + result.snapshotLength + ' elements of filter "' + filter[index] + '"');
+			log('remove ' + result.snapshotLength + ' elements of filter "' + array[index] + '"');
 			for (let i = 0; i <= result.snapshotLength - 1; i++) {
-				removenode(result.snapshotItem(i));
+				removenode(result.snapshotItem(i), index, mode);
 			}
+			result = null;
 		}
 	}
 
 
-	function removenode(node) {
-		//remove node
-		node.parentNode.removeChild(node);
+	function removenode(node, index, mode) {
+		switch (mode) {
+			case 0:
+				//remove node
+				node.parentNode.removeChild(node);
+				break;
+			case 1:
+				//remove attribute
+				node.removeAttribute(filter.attr.del.attr[index]);
+				break;
+			default:
+				log('ERROR removenode');
+		}
+
 		//update counters
 		count++;
 		countall++;
@@ -321,14 +345,12 @@
 	}
 
 
-	function del(selector, mode = 'node') {
-		switch (mode) {
-			case 'node':
-				filter.push(selector);
-				break;
-//				case 'attribute' 
-			default:
-				log('ERROR del');
+	function del(selector, attr) {
+		if (attr === undefined) {
+			filter.node.del.push(selector);
+		} else {
+			filter.attr.del.node.push(selector);
+			filter.attr.del.attr.push(attr);
 		}
 	}
 
