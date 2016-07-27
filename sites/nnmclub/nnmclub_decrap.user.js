@@ -1,12 +1,13 @@
 // ==UserScript==
 // @name         NNM Club DeCrap
 // @namespace    http://tampermonkey.net/
-// @version      0.2.1
+// @version      0.2.2
 // @downloadURL  https://github.com/DeCrap/DeCrap/raw/master/sites/nnmclub/nnmclub_decrap.user.js
 // @description  Removes all crap and shit for this site
 // @author       DeCrap
-// @include      /^https?://nnmclub.to/*/
+// @run-at       document-start
 // @grant        none
+// @include      /^https?://nnmclub.to/*/
 // ==/UserScript==
 
 //Docs for "one hour learning" antiadvertisment scripting, lol
@@ -106,10 +107,16 @@ function remove(array)
                 {
                     let element = result.snapshotItem(i);
                     element.parentNode.removeChild(element);
+                    count++;
                 }
             }
         }
     }
+}
+
+function editor()
+{
+    
 }
 
 function ClearAllIntervals() {
