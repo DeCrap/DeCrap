@@ -1,27 +1,35 @@
 // ==UserScript==
 // @name         NNM Club DeCrap
 // @namespace    http://tampermonkey.net/
+// @version      0.3
 // @downloadURL  https://github.com/DeCrap/DeCrap/raw/master/sites/nnmclub/nnmclub_decrap.user.js
 // @description  Removes all crap and shit for this site
 // @author       DeCrap
 // @run-at       document-start
+// @noframes
 // @grant        none
 // @include      /^https?://nnmclub.to/*/
 // ==/UserScript==
 
-//Docs for "one hour learning" antiadvertisment scripting, lol
-//script header: https://wiki.greasespot.net/Metadata_Block
-//Xpath selector format: http://www.w3schools.com/xsl/xpath_syntax.asp, https://ru.wikipedia.org/wiki/XPath
-//html: http://htmlbook.ru, https://webref.ru/html
-//js: https://learn.javascript.ru
+(function() {
+    'use strict';
+    var filter = []; //array for filters
+    var timeout = {};
+    ////////////////////////
+    //settings
+    timeout.freeze = 2000; //freeze all script every some second
+    timeout.remove = 230; //clear crap timeout
+    timeout.main = 50; //minimal mainloop timeout
+    //var debuglevel = 1; //0..3 - deep logging
+    var debug = 0;
+    ////////////////////////
+    log('starting!');
 
-function filters()
-{
-    log('filters fill');
-    //del(filter) - clear advertisment in realtime, before html-page comlete loading
-    //adel(filter) - clear advertisment after html-page comlete loading
-    //edit(filter, newvalue) - edit element in realtime, before html-page comlete loading
-    //aedit(filter, newvalue) - edit element after html-page comlete loading
+    ///////////////////////////////////////////////////
+    // ↓↓↓↓↓↓ YOUR ↓↓↓↓↓↓ FILTERS ↓↓↓↓↓↓ HERE ↓↓↓↓↓↓ //
+    // ↓↓↓↓↓↓ YOUR ↓↓↓↓↓↓ FILTERS ↓↓↓↓↓↓ HERE ↓↓↓↓↓↓ //
+    // ↓↓↓↓↓↓ YOUR ↓↓↓↓↓↓ FILTERS ↓↓↓↓↓↓ HERE ↓↓↓↓↓↓ //
+    ///////////////////////////////////////////////////
 
     //adblock detect
     del('//div[@class="request"]');
@@ -29,154 +37,289 @@ function filters()
 
     //directadvert.ru
     del('//div[contains(@class, "DA-BLOCK")]');
-    adel('//script[contains(., "DA-BLOCK")]');
+    del('//script[contains(., "DA-BLOCK")]');
     del('//script[contains(@src, "directadvert.ru") or contains(., "directadvert.ru")]');
-    
+
     //marketgid.com
     del('//script[contains(@src, "marketgid.com") or contains(., "marketgid.com")]');
     del('//div[@class="mgbox"]');
-    
+
     //awesomeredirector.com
     del('//*[contains(@href, "awesomeredirector.com")]');
-    
+
     //background image
     del('//style[contains(., "background-image")]');
-}
 
+    ///////////////////////////////////////////////////
+    // ↑↑↑↑↑↑ YOUR ↑↑↑↑↑↑ FILTERS ↑↑↑↑↑↑ HERE ↑↑↑↑↑↑ //
+    // ↑↑↑↑↑↑ YOUR ↑↑↑↑↑↑ FILTERS ↑↑↑↑↑↑ HERE ↑↑↑↑↑↑ //
+    // ↑↑↑↑↑↑ YOUR ↑↑↑↑↑↑ FILTERS ↑↑↑↑↑↑ HERE ↑↑↑↑↑↑ //
+    ///////////////////////////////////////////////////
+    log('filters fill');
 
+    //begin script
 
+    //arrays
+    var result = [];
+    //service var
+    var last = false; //last cicle?
+    var id = []; //timer id array
+    var count = 0; //count finding crap in this cicle
+    var changes = 0; //counter detected page changes
+    var changesall = 0;//all changes
+    var removing = false; //removing active?
+    var freezing = false; //scripts freezing?
+    //counters
+    var countall = 0; //count finding crap in all cicles
+    var cicles = 0; //count cicles
+    //misc arrays
+    //check timeout base
+    var base = {
+        main: Date.now(),
+        remove: Date.now(),
+        freeze: Date.now(),
+    };
 
+    //start script
 
+    //optimize();
+    init();
 
-//primary func
+    //set maintimer now
+    id.push = setTimeout(main, timeout.main);
+    log('next mainloop cicle start over '+timeout.main+'ms');
 
-function main()
-{
-    log('main loop start');
-    if (count > 0)
-    {
-        log('realtime clearing executing');
-        count = 0;
-        remove(sync_filter);
-        editor(sync_edit);
-    }
+    log('sleeping');
+    log('');
 
-    if (count > 0)
-    {
-        log('crap found: '+count+' elements, set start now');
-        id = setTimeout(main, timeout);
-    }
+    //end.
 
-    if (last)
-    {
-        log('last block start');
-        log('freezing async script');
-        ClearAllTimeouts();
-        log('last clearing execute');
-        remove(sync_filter);
-        remove(async_filter);
-        editor(sync_edit);
-        editor(async_edit);
-        clearTimeout(id);
-        log('last block end');
-    }
-    log('crap found in this cicle: '+count+' elements');
-    log('main loop end, sleeping');
-}
+    //primary func
 
+    //mainloop
 
-log('starting');
-//begin script
+    function main(){
+        if (((checkinterval()&&(changes>0))||(last))&&(!removing)){
+            //clear interrupt
+            removing = true;
+            var tms = Date.now();
 
-var last = false;
-var id;
-var count = 0;
-var sync_filter = [];
-var async_filter = [];
-var sync_edit = [];
-var async_edit = [];
-var timeout = 100;
-var debug = 0;
+            //add cicle counter
+            cicles++;
+            log('start mainloop №'+cicles);
 
-//start script
-count++;
+            //reset counter
+            count = 0;
+            log('on last cicles detect page changes: '+changes);
 
-//fill filters
-filters();
+            //find&remove craps
+            freeze();
+            remove();
 
-//set listener
-document.onreadystatechange = wait_load; //wait complete loading and clear async crap
+            //reset counter
+            changes = 0;
+            //log('reset counter: '+changes);
 
-//set interactive clear crap
-id = setTimeout(main, timeout);
+            //logging
+            log('end mainloop №'+cicles);
+            log('crap found in this cicle: '+count+' elements');
+            log('time cicle: '+(Date.now()-tms)+'ms');
 
-//end.
-log('sleeping');
-
-
-//misc func
-
-function remove(array)
-{
-    if ((array !== null)&&(array.length > 0))
-    {
-        for (let i = 0; i <= array.length - 1; i++)
-        {
-            log('del("'+array[i]+'")');
-            let result = document.evaluate(array[i], document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
-            if ((result !== null) && (result.snapshotLength > 0))
+            //exit or sleep?
+            if(!last){
+                log('sleeping' );
+                log('');//delimiter
+            }else
             {
-                log('found '+result.snapshotLength+' elements');
-                for (let i = 0; i <= result.snapshotLength - 1; i++)
-                {
-                    let element = result.snapshotItem(i);
-                    element.parentNode.removeChild(element);
-                    count++;
-                }
+                exit();
+                log('exiting');
+                ClearAllMainTimers();
+                log('script terminated');
+            }
+
+            //reset timeout check base
+            base.remove=Date.now();
+
+            //set interrupt
+            removing = false;
+
+        }else{
+            //log('mainloop start delayed: '+(Date.now()-ms)+'/'+timeout.remove+'ms');
+        }
+
+        //set next mainloop start
+        if(id.length>1){
+            log('WARNING: '+id.length+'timers!!!');
+            ClearAllMainTimers();
+        }
+        var t = id.pop;
+        if(!last) id.push = setTimeout(main, timeout.main);
+    }
+
+    function freeze(){
+        if ((checkinterval('freeze')||last)&&(!freezing)){
+            freezing = true; //clear interrupt
+            var tms = Date.now();
+            log('start freezing');
+
+            //freeze all scripts
+            ClearAllIntervals();
+            ClearAllTimeouts();
+
+            log('all scripts freezing!');
+            log('time cicle: '+(Date.now()-tms)+'ms');
+
+            //reset timeout check base
+            base.freeze=Date.now();
+
+            //set interrupt
+            freezing = false;
+        }
+    }
+
+
+
+    //misc func
+
+    function checkinterval(mode = 'remove'){
+        var time;
+        var interval;
+
+        switch(mode){
+            case 'main':
+                time = base.main;
+                interval = timeout.main;
+                break;
+            case 'remove':
+                time = base.remove;
+                interval = timeout.remove;
+                break;
+            case 'freeze':
+                time = base.freeze;
+                interval = timeout.freeze;
+                break;
+            default:
+                log('ERROR checkinterval');
+        }
+
+        return ((Date.now()-time) >= interval);
+    }
+
+
+    function exit(){
+        log('');
+        log('statistic:');
+        log('total cicles: '+cicles);
+        log('total crap destroyed: '+(countall));
+        log('total filters: '+filter.length);
+        log('efficiency: '+(countall/filter.length).toFixed(2));
+        log('');
+        init();
+    }
+
+
+    function init(){
+        var stage = false;
+        if(!last){
+            //set listeners
+            document.onreadystatechange = wait_load; //wait complete page loading
+            document.addEventListener('DOMSubtreeModified', wait_pagechange, stage);
+            log('set listener');
+        }
+        else{
+            //remove listener
+            document.removeEventListener('DOMSubtreeModified', wait_pagechange, stage);
+            log('remove listener');
+        }
+    }
+
+
+    function wait_load(){
+        var status = document.readyState;
+        log('page status: '+status);
+        //check status
+        if (status === "complete"){
+            log('page load completed!');
+            last = true;
+        }
+    }
+
+
+    function wait_pagechange(){
+        changes++;
+        changesall++;
+        //log('page change! counter: '+changes);
+    }
+
+
+    function remove(){
+        filterscan();
+    }
+
+
+    function filterscan(){
+        if((filter !== null)&&(filter.length > 0)){
+            for(let i=0; i<=filter.length-1; i++){
+                //find crap
+                result = document.evaluate(filter[i], document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+                //remove finding crap
+                resultscan(i);
             }
         }
     }
-}
 
-function editor()
-{
-    log('editing');
-}
 
-function log(str)
-{
-    if (debug === 1)
-    {
-        console.log(Math.round(performance.now())+': DeCrap '+str);
+    function resultscan(index){
+        if((result !== null)&&(result.snapshotLength > 0)){
+            log('remove '+result.snapshotLength+' elements of filter "'+filter[index]+'"');
+            for(let i=0; i<=result.snapshotLength-1; i++){
+                removenode(result.snapshotItem(i));
+            }
+        }
     }
-}
 
-function ClearAllIntervals() {
-    for (let i = 1; i < 99999; i++)
-        window.clearInterval(i);
-}
 
-function ClearAllTimeouts() {
-    for (let i = 1; i < 99999; i++)
-        window.clearTimeout(i);
-}
-
-function wait_load()
-{
-    if (document.readyState === "complete")
-    {
-        log('site load completed');
-        last = true;
-        id = setTimeout(main, timeout);
+    function removenode(node){
+        //remove node
+        node.parentNode.removeChild(node);
+        //update counters
+        count++;
+        countall++;
     }
-}
 
-function del(selector)
-{
-    sync_filter.push(selector);
-}
 
-function adel(selector)
-{
-    async_filter.push(selector);
-}
+    function ClearAllIntervals(){
+        //reset all interval timers
+        for (let i = 1; i < 99999; i++)
+            clearInterval(i);
+    }
+
+
+    function ClearAllTimeouts(){
+        //reset all timeout timers
+        for (let i = 1; i < 99999; i++)
+            clearTimeout(i);
+    }
+
+
+    function ClearAllMainTimers(){
+        if(id !== null){
+            while(id.length>0){
+                clearTimeout(id.pop);
+            }
+        }
+    }
+
+
+    function log(str){
+        //logging str
+        if (debug === 1) console.dir(Math.round(performance.now())+': DeCrap '+str);
+    }
+
+
+    function del(selector){
+        filter.push(selector);
+    }
+
+
+})();
