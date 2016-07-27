@@ -23,8 +23,8 @@
 	timeout.remove = 230; //clear crap timeout
 	timeout.main = 50; //minimal mainloop timeout
 	//var debuglevel = 1; //0..3 - deep logging
-	var debug = 1; //enable logs
-	var design = 1; //fix site design
+	var debug = 0; //enable logs
+	var design = 0; //fix site design
 	////////////////////////
 	log('starting!');
 
