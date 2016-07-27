@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         NNM Club DeCrap
 // @namespace    http://tampermonkey.net/
-// @version      0.3.1
+// @version      0.3.2
 // @downloadURL  https://github.com/DeCrap/DeCrap/raw/master/sites/nnmclub/nnmclub_decrap.user.js
 // @description  Removes all crap and shit for this site
 // @author       DeCrap
@@ -221,10 +221,17 @@
 		log('statistic:');
 		log('total cicles: ' + cicles);
 		log('total crap destroyed: ' + (countall));
-		log('total filters: ' + filter.length);
-		log('efficiency: ' + (countall / filter.length).toFixed(2));
+		log('total filters: ' + filterlen);
+		log('efficiency: ' + (countall / filterlen).toFixed(2));
 		log('');
 		init();
+	}
+
+	function filterlen(){
+		var len = 0;
+		len += filter.node.length;
+		len += filter.attr.length;
+		return len;
 	}
 
 
