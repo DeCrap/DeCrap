@@ -11,12 +11,18 @@
 // @noframes
 // ==/UserScript==
 
-(function() {
-	'use strict';
+//(function() {
+'use strict';
+module.exports = function() {
+
 	var filter = {}; //array for filters
 	var timeout = {};
 	filter.node = [];
-	filter.attr = [[],[]];
+	filter.attr = [
+		[],
+		[]
+	];
+
 	////////////////////////
 	//settings
 	timeout.freeze = 2000; //freeze all script every some second
@@ -24,48 +30,7 @@
 	timeout.main = 50; //minimal mainloop timeout
 	//var debuglevel = 1; //0..3 - deep logging
 	var debug = 0; //enable logs
-	var design = 0; //fix site design
 	////////////////////////
-	log('starting!');
-
-	///////////////////////////////////////////////////
-	// ↓↓↓↓↓↓ YOUR ↓↓↓↓↓↓ FILTERS ↓↓↓↓↓↓ HERE ↓↓↓↓↓↓ //
-	// ↓↓↓↓↓↓ YOUR ↓↓↓↓↓↓ FILTERS ↓↓↓↓↓↓ HERE ↓↓↓↓↓↓ //
-	// ↓↓↓↓↓↓ YOUR ↓↓↓↓↓↓ FILTERS ↓↓↓↓↓↓ HERE ↓↓↓↓↓↓ //
-	///////////////////////////////////////////////////
-
-	//adblock detect
-	del('//div[@class="request"]');
-	del('//script[contains(@src, "requests")]');
-
-	//directadvert.ru
-	del('//div[contains(@class, "DA-BLOCK")]');
-	del('//script[contains(., "DA-BLOCK")]');
-	del('//script[contains(@src, "directadvert.ru") or contains(., "directadvert.ru")]');
-
-	//marketgid.com
-	del('//script[contains(@src, "marketgid.com") or contains(., "marketgid.com")]');
-	del('//div[@class="mgbox"]');
-
-	//awesomeredirector.com
-	del('//*[contains(@href, "awesomeredirector.com")]');
-
-	//background image
-	del('//style[contains(., "background-image")]');
-
-	if (design === 1) {
-		//left navigation bar
-		del('//td[@class="leftnav"]');
-		del('//div[@class="copyright"]');
-		del('//body/div[@class="wrap"]', 'class');
-	}
-
-	///////////////////////////////////////////////////
-	// ↑↑↑↑↑↑ YOUR ↑↑↑↑↑↑ FILTERS ↑↑↑↑↑↑ HERE ↑↑↑↑↑↑ //
-	// ↑↑↑↑↑↑ YOUR ↑↑↑↑↑↑ FILTERS ↑↑↑↑↑↑ HERE ↑↑↑↑↑↑ //
-	// ↑↑↑↑↑↑ YOUR ↑↑↑↑↑↑ FILTERS ↑↑↑↑↑↑ HERE ↑↑↑↑↑↑ //
-	///////////////////////////////////////////////////
-	log('filters fill');
 
 	//begin script
 
@@ -91,16 +56,17 @@
 	};
 
 	//start script
+	function start() {
+		//optimize();
+		init();
 
-	//optimize();
-	init();
+		//set maintimer now
+		id.push = setTimeout(main, timeout.main);
+		log('next mainloop cicle start over ' + timeout.main + 'ms');
 
-	//set maintimer now
-	id.push = setTimeout(main, timeout.main);
-	log('next mainloop cicle start over ' + timeout.main + 'ms');
-
-	log('sleeping');
-	log('');
+		log('sleeping');
+		log('');
+	}
 
 	//end.
 
@@ -227,7 +193,7 @@
 		init();
 	}
 
-	function filterlen(){
+	function filterlen() {
 		var len = 0;
 		len += filter.node.length;
 		len += filter.attr.length;
@@ -359,6 +325,7 @@
 			filter.attr[1].push(attr);
 		}
 	}
+};
 
 
-})();
+//})();
