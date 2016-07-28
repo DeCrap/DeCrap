@@ -221,8 +221,8 @@
 		log('statistic:');
 		log('total cicles: ' + cicles);
 		log('total crap destroyed: ' + (countall));
-		log('total filters: ' + filterlen);
-		log('efficiency: ' + (countall / filterlen).toFixed(2));
+		log('total filters: ' + filterlen());
+		log('efficiency: ' + (countall / filterlen()).toFixed(2));
 		log('');
 		init();
 	}
