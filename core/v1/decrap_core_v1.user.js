@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         DeCrap core V1
 // @description  Core script from edit DOM tree for any site
-// @version      0.3.3.7
+// @version      0.3.3.8
 // @downloadURL  https://github.com/DeCrap/DeCrap/raw/core/core/v1/decrap_core_v1.user.js
 // @author       DeCrap
 // @license      GPL3
