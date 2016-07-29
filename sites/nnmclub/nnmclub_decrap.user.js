@@ -16,7 +16,8 @@
 (function() {
 	'use strict';
 	var core = require('./decrap_core_v1.user.js');
-	log('nnmnnmnnm')
+	
+	//log('nnmnnmnnm')
 	//var log = core.log;
 	// var del = core.del;
 

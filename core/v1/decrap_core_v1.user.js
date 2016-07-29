@@ -13,7 +13,8 @@
 
 //(function() {
 'use strict';
-module.exports = function() {
+module.exports = function(str){console.dir(Math.round(performance.now()) + ': DeCrap ' + str);};
+//module.exports = function() {
 
 	/*var filter = {}; //array for filters
 	var timeout = {};
@@ -311,11 +312,11 @@ module.exports = function() {
 	}
 */
 
-	function log(str) {
+	//function log(str) {
 		//logging str
 		//if (debug === 1) console.dir(Math.round(performance.now()) + ': DeCrap ' + str);
-		console.dir(Math.round(performance.now()) + ': DeCrap ' + str);
-	}
+	//	console.dir(Math.round(performance.now()) + ': DeCrap ' + str);
+	//}
 
 
 /*	function del(selector, attr) {
@@ -326,7 +327,7 @@ module.exports = function() {
 			filter.attr[1].push(attr);
 		}
 	}*/
-};
+//};
 
 
 //})();
