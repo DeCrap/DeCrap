@@ -15,7 +15,7 @@
 'use strict';
 module.exports = function() {
 
-	var filter = {}; //array for filters
+	/*var filter = {}; //array for filters
 	var timeout = {};
 	filter.node = [];
 	filter.attr = [
@@ -309,22 +309,23 @@ module.exports = function() {
 			}
 		}
 	}
-
+*/
 
 	function log(str) {
 		//logging str
-		if (debug === 1) console.dir(Math.round(performance.now()) + ': DeCrap ' + str);
+		//if (debug === 1) console.dir(Math.round(performance.now()) + ': DeCrap ' + str);
+		console.dir(Math.round(performance.now()) + ': DeCrap ' + str);
 	}
 
 
-	function del(selector, attr) {
+/*	function del(selector, attr) {
 		if (attr === undefined) {
 			filter.node.push(selector);
 		} else {
 			filter.attr[0].push(selector);
 			filter.attr[1].push(attr);
 		}
-	}
+	}*/
 };
 
 
