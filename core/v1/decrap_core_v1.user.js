@@ -13,7 +13,7 @@
 
 //(function() {
 'use strict';
-module.exports = function(str){console.dir(Math.round(performance.now()) + ': DeCrap ' + str);};
+module.exports.log = function(str){console.dir(Math.round(performance.now()) + ': DeCrap ' + str);};
 //module.exports = function() {
 
 	/*var filter = {}; //array for filters
