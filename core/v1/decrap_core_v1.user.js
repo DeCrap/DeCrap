@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         DeCrap core V1
 // @description  Core script from edit DOM tree for any site
-// @version      0.3.3.2
+// @version      0.3.3.3
 // @downloadURL  https://github.com/DeCrap/DeCrap/raw/core/core/v1/decrap_core_v1.user.js
 // @author       DeCrap
 // @license      GPL3
@@ -13,7 +13,8 @@
 
 //(function() {
 'use strict';
-module.exports.log = function(str){console.dir(Math.round(performance.now()) + ': DeCrap ' + str);};
+exports.log = 1;
+//module.exports.log = function(str){console.dir(Math.round(performance.now()) + ': DeCrap ' + str);};
 console.dir(Math.round(performance.now()) + ': DeCrap ' + 'core');
 //module.exports = function() {
 
