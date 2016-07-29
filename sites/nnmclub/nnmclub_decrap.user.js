@@ -2,7 +2,7 @@
 // @name         NNM Club DeCrap
 // @description  Removes all crap and shit for this site
 // @version      0.4.0.5
-// @downloadURL  https://github.com/DeCrap/DeCrap/raw/master/sites/nnmclub/nnmclub_decrap.user.js
+// @downloadURL  https://github.com/DeCrap/DeCrap/raw/core/sites/nnmclub/nnmclub_decrap.user.js
 // @author       DeCrap
 // @license      GPL3
 // @namespace    http://tampermonkey.net/
