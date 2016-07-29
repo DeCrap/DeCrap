@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         NNM Club DeCrap
 // @description  Removes all crap and shit for this site
-// @version      0.4.0.6
+// @version      0.4.0.7
 // @downloadURL  https://github.com/DeCrap/DeCrap/raw/core/sites/nnmclub/nnmclub_decrap.user.js
 // @author       DeCrap
 // @license      GPL3
@@ -17,7 +17,7 @@
 	//var core = require('https://github.com/DeCrap/DeCrap/raw/core/core/v1/decrap_core_v1.user.js');
 	console.log(Math.round(performance.now()) + ': DeCrap ' + 'nnm');
 	var log = require('https://github.com/DeCrap/DeCrap/raw/core/core/v1/decrap_core_v1.user.js');
-	console.log(Math.round(performance.now()) + ': DeCrap ' + log('core'));
+	console.log(Math.round(performance.now()) + ': DeCrap ' + log('cores'));
 
 	//log('nnmnnmnnm')
 	//var log = core.log;
