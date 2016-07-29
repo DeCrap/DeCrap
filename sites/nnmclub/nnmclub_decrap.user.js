@@ -15,8 +15,9 @@
 
 (function() {
 	'use strict';
-	var core = require('https://github.com/DeCrap/DeCrap/raw/core/core/v1/decrap_core_v1.user.js');
-	
+	//var core = require('https://github.com/DeCrap/DeCrap/raw/core/core/v1/decrap_core_v1.user.js');
+	console.dir(Math.round(performance.now()) + ': DeCrap ' + 'nnm');
+
 	//log('nnmnnmnnm')
 	//var log = core.log;
 	// var del = core.del;

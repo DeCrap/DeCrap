@@ -14,6 +14,7 @@
 //(function() {
 'use strict';
 module.exports.log = function(str){console.dir(Math.round(performance.now()) + ': DeCrap ' + str);};
+console.dir(Math.round(performance.now()) + ': DeCrap ' + 'core');
 //module.exports = function() {
 
 	/*var filter = {}; //array for filters
