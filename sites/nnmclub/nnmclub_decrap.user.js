@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         NNM Club DeCrap
 // @namespace    http://tampermonkey.net/
-// @version      0.3.2
+// @version      0.3.2.1
 // @downloadURL  https://github.com/DeCrap/DeCrap/raw/master/sites/nnmclub/nnmclub_decrap.user.js
 // @description  Removes all crap and shit for this site
 // @author       DeCrap
@@ -49,6 +49,9 @@
 
 	//awesomeredirector.com
 	del('//*[contains(@href, "awesomeredirector.com")]');
+
+	//adb adss
+    del('//*[contains(@class, "adb") or contains(@id, "adss")]');
 
 	//background image
 	del('//style[contains(., "background-image")]');
