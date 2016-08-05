@@ -22,6 +22,7 @@
 	timeout.freeze = 2000; //freeze all script every some second
 	timeout.remove = 230; //clear crap timeout
 	timeout.main = 50; //minimal mainloop timeout
+	sync_clean = 1; //fast sinchronic clear craps
 	//var debuglevel = 1; //0..3 - deep logging
 	var debug = 0; //enable logs
 	var design = 0; //fix site design
@@ -112,9 +113,10 @@
 	//mainloop
 
 	function main() {
-		if (((checkinterval() && (changes > 0)) || (last)) && (!removing)) {
+		if (!removing && ((checkinterval() && (changes > 0)) || last)) {
 			//clear interrupt
 			removing = true;
+
 			var tms = Date.now();
 
 			//add cicle counter
@@ -172,6 +174,7 @@
 	function freeze() {
 		if ((checkinterval('freeze') || last) && (!freezing)) {
 			freezing = true; //clear interrupt
+
 			var tms = Date.now();
 			log('start freezing');
 
@@ -268,6 +271,9 @@
 		changes++;
 		changesall++;
 		//log('page change! counter: '+changes);
+		if (sync_clean === 1){ //sync clean
+			remove();
+		}
 	}
 
 
