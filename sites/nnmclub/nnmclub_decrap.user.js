@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         NNM Club DeCrap
 // @namespace    http://tampermonkey.net/
-// @version      0.3.4
+// @version      0.3.4.1
 // @downloadURL  https://github.com/DeCrap/DeCrap/raw/master/sites/nnmclub/nnmclub_decrap.user.js
 // @description  Removes all crap and shit for this site
 // @author       DeCrap
@@ -53,6 +53,9 @@
 
 	//lixup.ru
     del('//td[@id="lastp"]');
+
+    //flylinks.ru
+    del('//noindex');
 
 	//adb adss
     del('//*[contains(@class, "adb") or contains(@id, "adss")]');
